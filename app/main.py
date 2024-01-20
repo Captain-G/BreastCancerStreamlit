@@ -2,10 +2,11 @@ import streamlit as st
 import pickle as pickle
 import pandas as pd
 import plotly.graph_objects as go
+import numpy as np
 
 
 def get_clean_data():
-    data = pd.read_csv("data/data.csv")
+    data = pd.read_csv("/home/gachuki/PycharmProjects/BreastCancerStreamlit/data/data.csv")
     data = data.drop(["Unnamed: 32", "id"], axis=1)
     data["diagnosis"] = data["diagnosis"].map({"M": 1, "B": 0})
 
@@ -133,6 +134,22 @@ def get_radar_chart(input_data):
     return fig
 
 
+def add_predictions(input_data):
+    model = pickle.load(open("/home/gachuki/PycharmProjects/BreastCancerStreamlit/model/model.pkl", "rb"))
+    scaler = pickle.load(open("/home/gachuki/PycharmProjects/BreastCancerStreamlit/model/scaler.pkl", "rb"))
+
+    input_array = np.array(list(input_data.values())).reshape(1, -1)
+    input_array_scaled = scaler.transform(input_array)
+    prediction = model.predict(input_array_scaled)
+    st.subheader("Cell cluster prediction is:")
+    if prediction[0] == 0:
+        st.write("Benign")
+    else:
+        st.write("Malignant")
+    st.write("Probability of being benign: ", model.predict_proba(input_array_scaled)[0][0])
+    st.write("Probability of being malignant: ", model.predict_proba(input_array_scaled)[0][1])
+
+
 def main():
     st.set_page_config(
         page_title="Breast Cancer Predictor",
@@ -140,6 +157,9 @@ def main():
         layout="wide",
         initial_sidebar_state="expanded"
     )
+
+    with open("/home/gachuki/PycharmProjects/BreastCancerStreamlit/assets/style.css") as f:
+        st.markdown("<style>{}</style>".format(f.read()), unsafe_allow_html=True)
 
     input_data = add_sidebar()
     # st.write(input_data)
@@ -154,7 +174,7 @@ def main():
         radar_chart = get_radar_chart(input_data)
         st.plotly_chart(radar_chart)
     with col2:
-        st.write("This is column 2")
+        add_predictions(input_data)
 
 
 if __name__ == "__main__":
