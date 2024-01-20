@@ -143,12 +143,89 @@ def add_predictions(input_data):
     prediction = model.predict(input_array_scaled)
     st.subheader("Cell cluster prediction is:")
     if prediction[0] == 0:
-        st.write("Benign")
-    else:
-        st.write("Malignant")
-    st.write("Probability of being benign: ", model.predict_proba(input_array_scaled)[0][0])
-    st.write("Probability of being malignant: ", model.predict_proba(input_array_scaled)[0][1])
+        st.markdown("""
+                    <style>
+                       .benign {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        margin: auto;
+                        padding: 10px;
+                        background-color: #0096FF;
+                        border: 1px solid #ddd;
+                        border-radius: 5px;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                        margin: 10px,
+                        # text-align: center;  /* Optional: Align text within the container */
+}
 
+                    </style>
+                """, unsafe_allow_html=True)
+
+        st.markdown('<div class="benign">Benign</div>', unsafe_allow_html=True)
+    else:
+        st.markdown("""
+                    <style>
+                        .malignant {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            margin: auto;
+                            padding: 10px;
+                            background-color: #880808;
+                            border: 1px solid #ddd;
+                            border-radius: 5px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;  /* Optional: Align text within the container */
+                        }
+
+                    </style>
+                """, unsafe_allow_html=True)
+
+        st.markdown('<div class="malignant">Malignant</div>', unsafe_allow_html=True)
+    st.write("Probability of being benign: ")
+    st.markdown("""
+                        <style>
+                            .custom-container {
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                justify-content: center;
+                                margin: auto;
+                                padding: 10px;
+                                border: 1px solid #ddd;
+                                border-radius: 5px;
+                                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                                text-align: center;  /* Optional: Align text within the container */
+                            }
+
+                        </style>
+                    """, unsafe_allow_html=True)
+
+    st.markdown(f'<div class="custom-container">{round(model.predict_proba(input_array_scaled)[0][0], 4) * 100}%</div>', unsafe_allow_html=True)
+    st.write("Probability of being malignant: ")
+    st.markdown("""
+                            <style>
+                                .custom-container {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    justify-content: center;
+                                    margin: auto;
+                                    padding: 10px;
+                                    border: 1px solid #ddd;
+                                    border-radius: 5px;
+                                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                                    margin: 10px
+                                    text-align: center;  /* Optional: Align text within the container */
+                                }
+
+                            </style>
+                        """, unsafe_allow_html=True)
+    st.markdown(f'<div class="custom-container">{round(model.predict_proba(input_array_scaled)[0][1], 4) * 100}%</div>',
+                unsafe_allow_html=True)
 
 def main():
     st.set_page_config(
@@ -158,11 +235,14 @@ def main():
         initial_sidebar_state="expanded"
     )
 
-    with open("/home/gachuki/PycharmProjects/BreastCancerStreamlit/assets/style.css") as f:
-        st.markdown("<style>{}</style>".format(f.read()), unsafe_allow_html=True)
+    st.markdown("""
+        <style>
+            @import url('/home/gachuki/PycharmProjects/BreastCancerStreamlit/assets/style.css');
+        </style>
+    """, unsafe_allow_html=True)
 
     input_data = add_sidebar()
-    # st.write(input_data)
+
     with st.container():
         st.title("Breast Cancer Predictor")
         st.write(
@@ -179,3 +259,23 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+#
+# st.markdown("""
+#     <style>
+#         .custom-container {
+#             margin: auto;
+#             padding: 10px;
+#             background-color: #880808;
+#             border: 1px solid #ddd;
+#             border-radius: 5px;
+#             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+#         }
+#     </style>
+# """, unsafe_allow_html=True)
+#
+# # Your Streamlit app content goes here
+# st.markdown("My Streamlit App")
+#
+# # Stylable container
+# st.markdown('<div class="custom-container">This is a stylable container.</div>', unsafe_allow_html=True)
