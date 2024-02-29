@@ -34,11 +34,13 @@ def get_clean_data():
 def main():
     data = get_clean_data()
     model, scaler = create_model(data)
-    with open("model.pkl", "wb") as f:
+    with open("breast_cancer_model.pkl", "wb") as f:
         pickle.dump(model, f)
-    with open("scaler.pkl", "wb") as f:
+    with open("breast_cancer_scaler.pkl", "wb") as f:
         pickle.dump(scaler, f)
 
 
 if __name__ == '__main__':
     main()
+    # brain_tumour = https://universe.roboflow.com/brain-detection/brain-detection-aiu2t/model/1
+    # breast cancer = https://universe.roboflow.com/search?q=breast+cancer

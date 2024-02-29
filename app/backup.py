@@ -3,7 +3,6 @@ import pickle as pickle
 import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
-import random
 
 
 def get_clean_data():
@@ -59,7 +58,6 @@ def add_sidebar():
             max_value=float(data[key].max()),
             value=float(data[key].mean())
         )
-    print(input_dict)
     return input_dict
 
 
@@ -185,9 +183,8 @@ def add_top_navbar():
 
 
 def add_predictions(input_data):
-    model = pickle.load(open("/home/gachuki/PycharmProjects/BreastCancerStreamlit/model/breast_cancer_model.pkl", "rb"))
-    scaler = pickle.load(
-        open("/home/gachuki/PycharmProjects/BreastCancerStreamlit/model/breast_cancer_scaler.pkl", "rb"))
+    model = pickle.load(open("/model/breast_cancer_model.pkl", "rb"))
+    scaler = pickle.load(open("/model/breast_cancer_scaler.pkl", "rb"))
 
     input_array = np.array(list(input_data.values())).reshape(1, -1)
     input_array_scaled = scaler.transform(input_array)
@@ -262,14 +259,21 @@ def add_predictions(input_data):
                 unsafe_allow_html=True)
 
 
-def breast_cancer():
-    # add_top_navbar()
+def main():
+    st.set_page_config(
+        page_title="Breast Cancer Predictor",
+        page_icon=":microscope:",
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
+
+    add_top_navbar()
 
     st.markdown("""
-           <style>
-               @import url('/home/gachuki/PycharmProjects/BreastCancerStreamlit/assets/style.css');
-           </style>
-       """, unsafe_allow_html=True)
+        <style>
+            @import url('/home/gachuki/PycharmProjects/BreastCancerStreamlit/assets/style.css');
+        </style>
+    """, unsafe_allow_html=True)
 
     input_data = add_sidebar()
 
@@ -285,126 +289,6 @@ def breast_cancer():
         st.plotly_chart(radar_chart)
     with col2:
         add_predictions(input_data)
-
-
-def lung_cancer():
-    col1, col2 = st.columns(2)
-
-    with col1:
-        gender = st.selectbox("Select the patient's gender", ["Male", "Female"])
-        if gender == "Male":
-            gender = 0
-        else:
-            gender = 1
-        age = st.slider("Enter the age of the patient", 0, 100)
-        smoker = st.selectbox("Does the patient smoke?", ["Yes", "No"])
-        if smoker == "Yes":
-            smoker = 2
-        else:
-            smoker = 1
-        yellow_fingers = st.selectbox("Does the patient have yellow fingers?", ["Yes", "No"])
-        if yellow_fingers == "Yes":
-            yellow_fingers = 2
-        else:
-            yellow_fingers = 1
-        anxiety = st.selectbox("Does the patient have anxiety?", ["Yes", "No"])
-        if anxiety == "Yes":
-            anxiety = 2
-        else:
-            anxiety = 1
-        peer_pressure = st.selectbox("Is the patient affected by peer pressure?", ["Yes", "No"])
-        if peer_pressure == "Yes":
-            peer_pressure = 2
-        else:
-            peer_pressure = 1
-        chronic_diseases = st.selectbox("Does the patient's family have a history with chronic diseases?",
-                                        ["Yes", "No"])
-        if chronic_diseases == "Yes":
-            chronic_diseases = 2
-        else:
-            chronic_diseases = 1
-        fatigue = st.selectbox("Does the patient suffer from occasional fatigue?", ["Yes", "No"])
-        if fatigue == "Yes":
-            fatigue = 2
-        else:
-            fatigue = 1
-
-    with col2:
-        allergy = st.selectbox("Does the patient suffer from allergies?", ["Yes", "No"])
-        if allergy == "Yes":
-            allergy = 2
-        else:
-            allergy = 1
-        wheezing = st.selectbox("Does the patient wheeze?", ["Yes", "No"])
-        if wheezing == "Yes":
-            wheezing = 2
-        else:
-            wheezing = 1
-        alcohol = st.selectbox("Does the patient consume alcohol?", ["Yes", "No"])
-        if alcohol == "Yes":
-            alcohol = 2
-        else:
-            alcohol = 1
-        cough = st.selectbox("Does the patient cough?", ["Yes", "No"])
-        if cough == "Yes":
-            cough = 2
-        else:
-            cough = 1
-        shortness_of_breath = st.selectbox("Does the patient suffer from shortness of breath?", ["Yes", "No"])
-        if shortness_of_breath == "Yes":
-            shortness_of_breath = 2
-        else:
-            shortness_of_breath = 1
-        swallowing_difficulty = st.selectbox("Does the patient have difficulties in swallowing?", ["Yes", "No"])
-        if swallowing_difficulty == "Yes":
-            swallowing_difficulty = 2
-        else:
-            swallowing_difficulty = 1
-        chest_pain = st.selectbox("Does the patient have chest pains?", ["Yes", "No"])
-        if chest_pain == "Yes":
-            chest_pain = 2
-        else:
-            chest_pain = 1
-
-        if st.button("Make Prediction"):
-            model = pickle.load(
-                open("/home/gachuki/PycharmProjects/BreastCancerStreamlit/model/lung_decision_tree_model.pkl", "rb"))
-
-            values = [gender, age, smoker, yellow_fingers, anxiety, peer_pressure, chronic_diseases, fatigue, allergy,
-                      wheezing,
-                      alcohol, cough, shortness_of_breath, swallowing_difficulty, chest_pain]
-            # Creating a DataFrame for the single row data
-            columns = [f'feature_{i}' for i in range(1, len(values) + 1)]
-            single_row_df = pd.DataFrame([values], columns=columns)
-
-            # Make predictions on the single row data
-            prediction = model.predict(single_row_df)
-
-            if prediction == ['1']:
-                st.subheader("Prediction : Has Lung Cancer")
-            elif prediction == ['0']:
-                st.subheader("Prediction: No Lung Cancer")
-
-
-def main():
-    st.set_page_config(
-        page_title="Breast Cancer Predictor",
-        page_icon=":microscope:",
-        layout="wide",
-        initial_sidebar_state="expanded"
-    )
-    option = st.selectbox("Select the Cancer Type to Operate ",
-                          ("Breast Cancer", "Leukemia", "Lung Cancer", "Pancreatic Cancer", "Prostate Cancer"))
-    if option == "Breast Cancer":
-        breast_cancer()
-    elif option == "Leukemia":
-        st.subheader("Leukemia")
-    elif option == "Lung Cancer":
-        lung_cancer()
-    elif option == "Pancreatic Cancer":
-        st.subheader("Pancreatic Cancer")
-    else:
-        st.subheader("Prostate Cancer")
 
 
 if __name__ == "__main__":
